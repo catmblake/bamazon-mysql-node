@@ -16,7 +16,7 @@ connection.connect(function (err) {
 });
 
 function displayInventory() {
-  connection.query("SELECT * FROM products", function (err, results) {
+  connection.query("SELECT item_id, product_name, price FROM products", function (err, results) {
     if (err) throw err;
     console.table(results);
     inquirer.prompt([{
@@ -37,8 +37,22 @@ function displayInventory() {
         if (userOrder === results[i].item_id) {
           console.log(`You ordered ${userOrderQuantity} of item no.${results[i].item_id} - ${results[i].product_name}`);
         }
-
       }
+      connection.query("SELECT item_id, product_name, price FROM products", function (err, results) {
+        if (err) throw err;
+      connection.query(`SELECT * FROM products WHERE item_id = ${userOrder}`, function (err, results){
+        if (err) throw err; 
+        console.log(results);
+        console.log(results[0].stock_quantity);
+        var remainder = results[0].stock_quantity - userOrderQuantity;
+        console.log(remainder);
+        if (remainder >= 0) {
+          console.log(results[0].price);
+          var orderTotal = userOrderQuantity*results[0].price;
+          console.log(`Your order total is ${orderTotal}`)
+        }
+      })
+      })
     });
   });
 }
