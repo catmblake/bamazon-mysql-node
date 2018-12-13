@@ -34,7 +34,7 @@ function beginTasks() {
                 replenishInventory();
                 break;
             case "Add New Product":
-                //   code
+                addNewProduct();
                 break;
         }
     })
@@ -69,24 +69,62 @@ function replenishInventory() {
     }]).then(function (answer) {
         var updateItem = JSON.parse(answer.updateItem);
         var addStock = JSON.parse(answer.addStock);
+        connection.query(`SELECT stock_quantity FROM products WHERE item_id = ${updateItem}`,function (err, res) {
+            if (err) throw err;
+            var currentQuantity = res[0].stock_quantity;
         connection.query("UPDATE products SET ? WHERE ?",
-        [
-            {
-                stock_quantity: addStock
-            },
-            {
-                item_id: updateItem
-            }
-        ],
+            [
+                {
+                    stock_quantity: (currentQuantity + addStock)
+                },
+                {
+                    item_id: updateItem
+                }
+            ],
             function (err, res) {
                 if (err) throw err;
                 console.log("Product inventory has been updated!");
-                performNewTask ();
+                performNewTask();
             }
         );
     })
+})
 }
 
+function addNewProduct() {
+    inquirer.prompt([{
+        name: "productName",
+        type: "input",
+        message: "What is the product Name?"
+    },
+    {
+        name: "productDept",
+        type: "input",
+        message: "What department does the product belong to?"
+    },
+    {
+        name: "salePrice",
+        type: "input",
+        message: "What is the retail price for this product?"
+    },
+    {
+        name: "initialQuantity",
+        type: "input",
+        message: "How many stock units of this product are you adding?"
+    }]).then(function (answer) {
+        console.log(answer);
+        var productName = (answer.productName);
+        var productDept = (answer.productDept);
+        var salePrice = JSON.parse(answer.salePrice).toFixed(2);
+        var initialQuantity = JSON.parse(answer.initialQuantity);
+        console.log(productName, productDept, salePrice, initialQuantity);
+        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)", [productName, productDept, salePrice, initialQuantity], function (err, res) {
+            if (err) throw err;
+            console.log("Your product has been added.");
+            performNewTask();
+        })
+    })
+}
 function performNewTask() {
     inquirer.prompt([{
         name: "newTask",
@@ -96,7 +134,7 @@ function performNewTask() {
         if (answer.newTask) {
             beginTasks();
         } else {
-            console.log("Exiting Manager Dashboard")
+            console.log("Exiting Manager Dashboard");
             connection.end();
         }
     })
