@@ -31,7 +31,7 @@ function beginTasks() {
                 displayLowInventory();
                 break;
             case "Add to Inventory":
-                //   code
+                replenishInventory();
                 break;
             case "Add New Product":
                 //   code
@@ -56,7 +56,38 @@ function displayLowInventory() {
     })
 }
 
-function performNewTask(){
+function replenishInventory() {
+    inquirer.prompt([{
+        name: "updateItem",
+        type: "input",
+        message: "What is the id of the product you wish to update"
+    },
+    {
+        name: "addStock",
+        type: "input",
+        message: "How many units of stock are you adding to this item?"
+    }]).then(function (answer) {
+        var updateItem = JSON.parse(answer.updateItem);
+        var addStock = JSON.parse(answer.addStock);
+        connection.query("UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: addStock
+            },
+            {
+                item_id: updateItem
+            }
+        ],
+            function (err, res) {
+                if (err) throw err;
+                console.log("Product inventory has been updated!");
+                performNewTask ();
+            }
+        );
+    })
+}
+
+function performNewTask() {
     inquirer.prompt([{
         name: "newTask",
         type: "confirm",
