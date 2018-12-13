@@ -13,13 +13,16 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
   if (err) throw err;
   console.log("\nWelcome to bamazon, the leading bash terminal retailer.\nThe items listed below are on sale now!\n");
-  getCustomerOrder();
+  displayAvailableInventory ()
 });
-
-function getCustomerOrder() {
-  connection.query("SELECT item_id, product_name, price FROM products WHERE stock_quantity > 0", function (err, results) {
-    if (err) throw err;
-    console.table(results);
+function displayAvailableInventory () {
+connection.query("SELECT item_id, product_name, price FROM products WHERE stock_quantity > 0", function (err, results) {
+  if (err) throw err;
+  console.table(results);
+  getCustomerOrder();
+})
+}
+  function getCustomerOrder() {
     inquirer.prompt([{
       name: "shop",
       type: "confirm",
@@ -36,16 +39,12 @@ function getCustomerOrder() {
           type: "input",
           message: "What quantity of this item would you like to purchase?"
         }]).then(function (answer) {
-          for (var i = 0; i < results.length; i++) {
             var customerOrder = JSON.parse(answer.order);
             var orderQuantity = JSON.parse(answer.quantity);
-            if (customerOrder === results[i].item_id) {
-              var orderInfo = `${orderQuantity} of item ${results[i].item_id}: ${results[i].product_name}`;
+            connection.query(`SELECT * FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
+              if (err) throw err;
+              var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
               console.log(`You ordered ${orderInfo}`);
-            }
-          }
-          connection.query(`SELECT price, stock_quantity FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
-            if (err) throw err;
             var remainingStock = results[0].stock_quantity - orderQuantity;
             if (remainingStock >= 0) {
               var orderPrice = (orderQuantity * results[0].price).toFixed(2);
@@ -55,7 +54,7 @@ function getCustomerOrder() {
                 type: "list",
                 choices: ["Proceed to Checkout", "Cancel Order"],
                 message: "Would you like to complete your order with us?"
-              }]).then (function(answer){
+              }]).then(function (answer) {
                 if (answer.checkout === "Proceed to Checkout") {
                   updateProductInventory(remainingStock, customerOrder);
                   console.log("Thank you for shopping at bamazon!");
@@ -72,8 +71,8 @@ function getCustomerOrder() {
                 type: "list",
                 choices: ["Find Something Else", "Quit Shopping"],
                 message: "What would you like to do?"
-              }]).then(function(answer){
-                if (answer.continue === "Find Something Else"){
+              }]).then(function (answer) {
+                if (answer.continue === "Find Something Else") {
                   getCustomerOrder();
                 } else {
                   console.log("Goodbye. Please check back again soon.");
@@ -88,7 +87,6 @@ function getCustomerOrder() {
         connection.end();
       }
     })
-  })
 };
 function updateProductInventory(remainingStock, customerOrder) {
   connection.query(
@@ -101,7 +99,7 @@ function updateProductInventory(remainingStock, customerOrder) {
         item_id: customerOrder
       }
     ],
-    function(err, res) {
+    function (err, res) {
       if (err) throw err;
       console.log("Your order is complete!");
     }
