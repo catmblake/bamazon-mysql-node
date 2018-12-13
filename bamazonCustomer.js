@@ -67,6 +67,19 @@ function getCustomerOrder() {
               })
             } else {
               console.log("We have insufficient stock to process your order at this time.")
+              inquirer.prompt([{
+                name: "continue",
+                type: "list",
+                choices: ["Find Something Else", "Quit Shopping"],
+                message: "What would you like to do?"
+              }]).then(function(answer){
+                if (answer.continue === "Find Something Else"){
+                  getCustomerOrder();
+                } else {
+                  console.log("Goodbye. Please check back again soon.");
+                  connection.end();
+                }
+              })
             }
           })
         })
