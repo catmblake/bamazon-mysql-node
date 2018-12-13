@@ -90,7 +90,6 @@ function getCustomerOrder() {
     })
   })
 };
-
 function updateProductInventory(remainingStock, customerOrder) {
   connection.query(
     "UPDATE products SET ? WHERE ?",
