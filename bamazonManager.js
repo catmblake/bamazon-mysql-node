@@ -28,7 +28,7 @@ function beginTasks() {
                 displayProductsForSale();
                 break;
             case "View Low Inventory":
-                //   code
+                displayLowInventory();
                 break;
             case "Add to Inventory":
                 //   code
@@ -44,16 +44,29 @@ function displayProductsForSale() {
     connection.query("SELECT * FROM products", function (err, response) {
         if (err) throw err;
         console.table(response);
-        inquirer.prompt([{
-            name: "newTask",
-            type: "confirm",
-            message: "Would you like to perform another task?"
-        }]).then(function (answer) {
-            if (answer.newTask) {
-                beginTasks();
-            } else {
-                connection.end();
-            }
-        })
+        performNewTask();
+    })
+}
+
+function displayLowInventory() {
+    connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, response) {
+        if (err) throw err;
+        console.table(response);
+        performNewTask();
+    })
+}
+
+function performNewTask(){
+    inquirer.prompt([{
+        name: "newTask",
+        type: "confirm",
+        message: "Would you like to perform another task?"
+    }]).then(function (answer) {
+        if (answer.newTask) {
+            beginTasks();
+        } else {
+            console.log("Exiting Manager Dashboard")
+            connection.end();
+        }
     })
 }
