@@ -29,7 +29,13 @@ SELECT * FROM products;
 CREATE TABLE departments (
 department_id INTEGER NOT NULL,
 department_name VARCHAR (255) NOT NULL,
-over_head_costs DECIMAL(10,2)
+over_head_costs DECIMAL(10,2),
+PRIMARY KEY (department_id)
 );
+
+SELECT * FROM departments;
+
+ALTER TABLE products
+ADD product_sales DECIMAL(10,2);
 
 -- modify and add to dept table: product_sales DECIMAL(10,2)
