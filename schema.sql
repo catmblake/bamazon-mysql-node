@@ -31,3 +31,5 @@ department_id INTEGER NOT NULL,
 department_name VARCHAR (255) NOT NULL,
 over_head_costs DECIMAL(10,2)
 );
+
+-- modify and add to dept table: product_sales DECIMAL(10,2)
