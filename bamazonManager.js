@@ -105,12 +105,18 @@ function addNewProduct() {
     {
         name: "salePrice",
         type: "input",
-        message: "What is the retail price for this product?"
+        message: "What is the retail price for this product?",
+        validate: function (value) {
+            return !isNaN(value);
+          }
     },
     {
         name: "initialQuantity",
         type: "input",
-        message: "How many stock units of this product are you adding?"
+        message: "How many stock units of this product are you adding?",
+        validate: function (value) {
+            return !isNaN(value);
+        }
     }]).then(function (answer) {
         console.log(answer);
         var productName = (answer.productName).toLowerCase();
