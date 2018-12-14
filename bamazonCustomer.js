@@ -1,7 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 require("console.table");
-
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -12,7 +11,7 @@ var connection = mysql.createConnection({
 // connect to the mysql server and sql database
 connection.connect(function (err) {
   if (err) throw err;
-  console.log("\nWelcome to bamazon, the leading bash terminal retailer.\nThe items listed below are on sale now!\n");
+  console.log("\nWelcome to bamazon, the leading command line retailer.\nThe items listed below are on sale now!\n");
   displayAvailableInventory()
 });
 function displayAvailableInventory() {
@@ -44,8 +43,8 @@ function getCustomerOrder() {
     type: "input",
     message: "What quantity of this item would you like to purchase?"
   }]).then(function (answer) {
-    var customerOrder = JSON.parse(answer.order);
-    var orderQuantity = JSON.parse(answer.quantity);
+    var customerOrder = (answer.order);
+    var orderQuantity = (answer.quantity);
     connection.query(`SELECT * FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
       if (err) throw err;
       var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
@@ -88,21 +87,20 @@ function getCustomerOrder() {
     })
   })
 };
-
-  function updateProductInventory(remainingStock, customerOrder) {
-    connection.query(
-      "UPDATE products SET ? WHERE ?",
-      [
-        {
-          stock_quantity: remainingStock
-        },
-        {
-          item_id: customerOrder
-        }
-      ],
-      function (err, res) {
-        if (err) throw err;
-        console.log("Your order is complete!");
+function updateProductInventory(remainingStock, customerOrder) {
+  connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [
+      {
+        stock_quantity: remainingStock
+      },
+      {
+        item_id: customerOrder
       }
-    );
-  }
+    ],
+    function (err, res) {
+      if (err) throw err;
+      console.log("Your order is complete!");
+    }
+  );
+}

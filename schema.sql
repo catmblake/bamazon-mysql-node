@@ -25,3 +25,9 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ("yoga mat", "sports equipment", 18.95, 30);
 
 SELECT * FROM products;
+
+CREATE TABLE departments (
+department_id INTEGER NOT NULL,
+department_name VARCHAR (255) NOT NULL,
+over_head_costs DECIMAL(10,2)
+);
