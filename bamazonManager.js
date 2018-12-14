@@ -60,35 +60,54 @@ function replenishInventory() {
     inquirer.prompt([{
         name: "updateItem",
         type: "input",
-        message: "What is the id of the product you wish to update"
-    },
-    {
-        name: "addStock",
-        type: "input",
-        message: "How many units of stock are you adding to this item?"
+        message: "What is the id of the product you wish to update",
+        validate: function (value) {
+            return !isNaN(value);
+        }
     }]).then(function (answer) {
+        var correct = false;
         var updateItem = JSON.parse(answer.updateItem);
-        var addStock = JSON.parse(answer.addStock);
-        connection.query(`SELECT stock_quantity FROM products WHERE item_id = ${updateItem}`,function (err, res) {
-            if (err) throw err;
-            var currentQuantity = res[0].stock_quantity;
-        connection.query("UPDATE products SET ? WHERE ?",
-            [
-                {
-                    stock_quantity: (currentQuantity + addStock)
-                },
-                {
-                    item_id: updateItem
+        connection.query("SELECT item_id FROM products", function (err, results) {
+            for (var i = 0; i < results.length; i++) {
+                if (updateItem === results[i].item_id) {
+                    correct = true;
+                    inquirer.prompt([{
+                        name: "addStock",
+                        type: "input",
+                        message: "How many units of stock are you adding to this item?",
+                        validate: function (value) {
+                            return !isNaN(value);
+                        }
+                    }]).then(function (answer) {
+                        var addStock = JSON.parse(answer.addStock);
+                        connection.query(`SELECT stock_quantity FROM products WHERE item_id = ${updateItem}`, function (err, res) {
+                            if (err) throw err;
+                            var currentQuantity = res[0].stock_quantity;
+                            connection.query("UPDATE products SET ? WHERE ?",
+                                [
+                                    {
+                                        stock_quantity: (currentQuantity + addStock)
+                                    },
+                                    {
+                                        item_id: updateItem
+                                    }
+                                ],
+                                function (err, res) {
+                                    if (err) throw err;
+                                    console.log("Product inventory has been updated!");
+                                    performNewTask();
+                                }
+                            );
+                        })
+                    })
+                } 
+                if ((i+1) === results.length && correct === false) {
+                    console.log("Invalid product selection.");
+                    performNewTask();
                 }
-            ],
-            function (err, res) {
-                if (err) throw err;
-                console.log("Product inventory has been updated!");
-                performNewTask();
             }
-        );
+        })
     })
-})
 }
 
 function addNewProduct() {
@@ -108,7 +127,7 @@ function addNewProduct() {
         message: "What is the retail price for this product?",
         validate: function (value) {
             return !isNaN(value);
-          }
+        }
     },
     {
         name: "initialQuantity",
@@ -121,8 +140,8 @@ function addNewProduct() {
         console.log(answer);
         var productName = (answer.productName).toLowerCase();
         var productDept = (answer.productDept).toLowerCase();
-        var salePrice = JSON.parse(answer.salePrice).toFixed(2);
-        var initialQuantity = JSON.parse(answer.initialQuantity);
+        var salePrice = (answer.salePrice).toFixed(2);
+        var initialQuantity = answer.initialQuantity;
         connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)", [productName, productDept, salePrice, initialQuantity], function (err, res) {
             if (err) throw err;
             console.log("Your product has been added.");
