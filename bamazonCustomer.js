@@ -69,7 +69,7 @@ function getCustomerOrder(results) {
             var remainingStock = results[0].stock_quantity - orderQuantity;
             if (remainingStock >= 0) {
               var orderPrice = (orderQuantity * results[0].price).toFixed(2);
-              var productSales = results[0].product_sales + orderPrice;
+              var productSales = results[0].product_sales + parseFloat(orderPrice);
               console.log(`Your order total is $${orderPrice}${divider}`);
               inquirer.prompt([{
                 name: "checkout",
