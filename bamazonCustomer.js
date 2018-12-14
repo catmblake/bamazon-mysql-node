@@ -24,7 +24,7 @@ function displayAvailableInventory() {
       message: "Would you like to start shopping"
     }]).then(function (answer) {
       if (answer.shop) {
-        getCustomerOrder();
+        getCustomerOrder(results);
       } else {
         console.log("Thank you for visiting bamazon. Please come back soon!")
         connection.end();
@@ -32,61 +32,77 @@ function displayAvailableInventory() {
     })
   })
 };
-function getCustomerOrder() {
+function getCustomerOrder(results) {
   inquirer.prompt([{
     name: "order",
     type: "input",
-    message: "What is the id of the product you wish to purchase?"
-  },
-  {
-    name: "quantity",
-    type: "input",
-    message: "What quantity of this item would you like to purchase?"
+    message: "What is the id of the product you wish to purchase?",
+    validate: function (value) {
+      return !isNaN(value);
+    }
   }]).then(function (answer) {
-    var customerOrder = (answer.order);
-    var orderQuantity = (answer.quantity);
-    connection.query(`SELECT * FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
-      if (err) throw err;
-      var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
-      console.log(`You ordered ${orderInfo}`);
-      var remainingStock = results[0].stock_quantity - orderQuantity;
-      if (remainingStock >= 0) {
-        var orderPrice = (orderQuantity * results[0].price).toFixed(2);
-        console.log(`Your order total is $${orderPrice}`);
+    var customerOrder = JSON.parse(answer.order);
+    for (var i = 0; i < results.length; i++) {
+      if (customerOrder === results[i].item_id) {
         inquirer.prompt([{
-          name: "checkout",
-          type: "list",
-          choices: ["Proceed to Checkout", "Cancel Order"],
-          message: "Would you like to complete your order with us?"
-        }]).then(function (answer) {
-          if (answer.checkout === "Proceed to Checkout") {
-            updateProductInventory(remainingStock, customerOrder);
-            console.log("Thank you for shopping at bamazon!");
-            connection.end();
-          } else if (answer.checkout === "Cancel Order") {
-            console.log("We have saved this order in your cart. Please come back to bamazon when you are ready to complete your purchase")
-            connection.end();
+          name: "quantity",
+          type: "input",
+          message: "What quantity of this item would you like to purchase?",
+          validate: function (value) {
+            return !isNaN(value);
           }
+        }]).then(function (answer) {
+          var orderQuantity = (answer.quantity);
+          connection.query(`SELECT * FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
+            if (err) throw err;
+            var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
+            console.log(`You ordered ${orderInfo}`);
+            var remainingStock = results[0].stock_quantity - orderQuantity;
+            if (remainingStock >= 0) {
+              var orderPrice = (orderQuantity * results[0].price).toFixed(2);
+              console.log(`Your order total is $${orderPrice}`);
+              inquirer.prompt([{
+                name: "checkout",
+                type: "list",
+                choices: ["Proceed to Checkout", "Cancel Order"],
+                message: "Would you like to complete your order with us?"
+              }]).then(function (answer) {
+                if (answer.checkout === "Proceed to Checkout") {
+                  updateProductInventory(remainingStock, customerOrder);
+                  console.log("Thank you for shopping at bamazon!");
+                  connection.end();
+                } else if (answer.checkout === "Cancel Order") {
+                  console.log("We have saved this order in your cart. Please come back to bamazon when you are ready to complete your purchase")
+                  connection.end();
+                }
+              })
+            } else {
+              console.log("We have insufficient stock to process your order at this time.")
+              inquirer.prompt([{
+                name: "continue",
+                type: "list",
+                choices: ["Find Something Else", "Quit Shopping"],
+                message: "What would you like to do?"
+              }]).then(function (answer) {
+                if (answer.continue === "Find Something Else") {
+                  getCustomerOrder();
+                } else {
+                  console.log("Goodbye. Please check back again soon.");
+                  connection.end();
+                }
+              })
+            }
+          })
         })
       } else {
-        console.log("We have insufficient stock to process your order at this time.")
-        inquirer.prompt([{
-          name: "continue",
-          type: "list",
-          choices: ["Find Something Else", "Quit Shopping"],
-          message: "What would you like to do?"
-        }]).then(function (answer) {
-          if (answer.continue === "Find Something Else") {
-            getCustomerOrder();
-          } else {
-            console.log("Goodbye. Please check back again soon.");
-            connection.end();
-          }
-        })
+        connection.end();
+        return console.log("We're sorry this product does not exist in bamazon inventory");
+        // call a function to find another product
       }
-    })
+    }
   })
-};
+}
+
 function updateProductInventory(remainingStock, customerOrder) {
   connection.query(
     "UPDATE products SET ? WHERE ?",
