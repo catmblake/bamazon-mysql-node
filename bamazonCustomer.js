@@ -49,8 +49,10 @@ function getCustomerOrder(results) {
     }
   }]).then(function (answer) {
     var customerOrder = JSON.parse(answer.order);
+    var correct = false;
      for (var i = 0; i < results.length; i++) {
       if (customerOrder === results[i].item_id) {
+        correct = true;
         inquirer.prompt([{
           name: "quantity",
           type: "input",
@@ -85,11 +87,15 @@ function getCustomerOrder(results) {
               })
             } else {
               console.log(`${divider}We have insufficient stock to process your order at this time.${divider}`)
-              continueOrQuit();
+              continueOrQuit(results);
             }
           })
         })
-      } //want to add an else sorry this product doesn't exist but don't know how to with the loop
+      } 
+      if ((i+1) === results.length && correct === false) {
+        console.log(`${divider}Invalid product selection.${divider}`)
+        continueOrQuit(results);
+      }
     }
   })
 }
@@ -112,7 +118,7 @@ function updateProductInventory(remainingStock, customerOrder) {
   );
 }
 // function asking customer if they want to checkout or cancel
-function continueOrQuit () {
+function continueOrQuit (results) {
   inquirer.prompt([{
     name: "continue",
     type: "list",
@@ -120,7 +126,7 @@ function continueOrQuit () {
     message: "What would you like to do?"
   }]).then(function (answer) {
     if (answer.continue === "Find Something Else") {
-      getCustomerOrder();
+      getCustomerOrder(results);
     } else {
       console.log(`${divider}Goodbye. Please check back again soon.${divider}`);
       connection.end();
