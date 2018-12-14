@@ -42,7 +42,7 @@ connection.query("SELECT item_id, product_name, price FROM products WHERE stock_
             var customerOrder = JSON.parse(answer.order);
             var orderQuantity = JSON.parse(answer.quantity);
             connection.query(`SELECT * FROM products WHERE item_id = ${customerOrder}`, function (err, results) {
-              if (err) throw err;
+              if (err) throw err; 
               var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
               console.log(`You ordered ${orderInfo}`);
             var remainingStock = results[0].stock_quantity - orderQuantity;
@@ -88,6 +88,7 @@ connection.query("SELECT item_id, product_name, price FROM products WHERE stock_
       }
     })
 };
+
 function updateProductInventory(remainingStock, customerOrder) {
   connection.query(
     "UPDATE products SET ? WHERE ?",

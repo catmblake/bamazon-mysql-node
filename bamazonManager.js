@@ -113,11 +113,11 @@ function addNewProduct() {
         message: "How many stock units of this product are you adding?"
     }]).then(function (answer) {
         console.log(answer);
-        var productName = (answer.productName);
-        var productDept = (answer.productDept);
+        var productName = (answer.productName).toLowerCase();
+        var productDept = (answer.productDept).toLowerCase();
         var salePrice = JSON.parse(answer.salePrice).toFixed(2);
         var initialQuantity = JSON.parse(answer.initialQuantity);
-        console.log(productName, productDept, salePrice, initialQuantity);
+        console.log(productName, newProductName, productDept, salePrice, initialQuantity);
         connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)", [productName, productDept, salePrice, initialQuantity], function (err, res) {
             if (err) throw err;
             console.log("Your product has been added.");
