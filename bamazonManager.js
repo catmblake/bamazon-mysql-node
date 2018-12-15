@@ -100,8 +100,8 @@ function replenishInventory() {
                             );
                         })
                     })
-                } 
-                if ((i+1) === results.length && correct === false) {
+                }
+                if ((i + 1) === results.length && correct === false) {
                     console.log("Invalid product selection.");
                     performNewTask();
                 }
@@ -111,41 +111,48 @@ function replenishInventory() {
 }
 
 function addNewProduct() {
-    inquirer.prompt([{
-        name: "productName",
-        type: "input",
-        message: "What is the product Name?"
-    },
-    {
-        name: "productDept",
-        type: "input",
-        message: "What department does the product belong to?"
-    },
-    {
-        name: "salePrice",
-        type: "input",
-        message: "What is the retail price for this product?",
-        validate: function (value) {
-            return !isNaN(value);
-        }
-    },
-    {
-        name: "initialQuantity",
-        type: "input",
-        message: "How many stock units of this product are you adding?",
-        validate: function (value) {
-            return !isNaN(value);
-        }
-    }]).then(function (answer) {
-        console.log(answer);
-        var productName = (answer.productName).toLowerCase();
-        var productDept = (answer.productDept).toLowerCase();
-        var salePrice = (answer.salePrice).toFixed(2);
-        var initialQuantity = answer.initialQuantity;
-        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)", [productName, productDept, salePrice, initialQuantity], function (err, res) {
-            if (err) throw err;
-            console.log("Your product has been added.");
-            performNewTask();
+    connection.query("SELECT department_name FROM departments", function (err, res) {
+        if (err) throw err;
+        var departments = [];
+        for (var i=0; i<res.length; i++) {
+            departments.push(res[i].department_name)
+        };
+        inquirer.prompt([{
+            name: "productName",
+            type: "input",
+            message: "What is the product Name?"
+        },
+        {
+            name: "productDept",
+            type: "list",
+            choices: departments,
+            message: "What department does the product belong to?"
+        },
+        {
+            name: "salePrice",
+            type: "input",
+            message: "What is the retail price for this product?",
+            validate: function (value) {
+                return !isNaN(value);
+            }
+        },
+        {
+            name: "initialQuantity",
+            type: "input",
+            message: "How many stock units of this product are you adding?",
+            validate: function (value) {
+                return !isNaN(value);
+            }
+        }]).then(function (answer) {
+            var productName = (answer.productName).toLowerCase();
+            var productDept = (answer.productDept).toLowerCase();
+            var salePrice = JSON.parse(answer.salePrice).toFixed(2);
+            var initialQuantity = JSON.parse(answer.initialQuantity);
+            connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)", [productName, productDept, salePrice, initialQuantity], function (err, res) {
+                if (err) throw err;
+                console.log("Your product has been added.");
+                performNewTask();
+            })
         })
     })
 }

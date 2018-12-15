@@ -42,6 +42,6 @@ INSERT INTO departments (department_name, over_head_costs) VALUES ("sports equip
 
 
 ALTER TABLE products
-ADD product_sales DECIMAL(10,2) NOT NULL;
+ADD product_sales DECIMAL(10,2);
 
 SELECT * FROM departments;
