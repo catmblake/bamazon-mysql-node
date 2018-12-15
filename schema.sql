@@ -45,8 +45,3 @@ ALTER TABLE products
 ADD product_sales DECIMAL(10,2) NOT NULL;
 
 SELECT * FROM departments;
-
-SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales - departments.over_head_costs) AS total_profit
-FROM departments
-INNER JOIN products ON departments.department_name = products.department_name
-GROUP BY departments.department_id;
