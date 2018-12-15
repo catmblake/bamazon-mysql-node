@@ -49,6 +49,7 @@ function getCustomerOrder(results) {
     }
   }]).then(function (answer) {
     var customerOrder = JSON.parse(answer.order);
+    // checking against database to determine if product exists
     var correct = false;
      for (var i = 0; i < results.length; i++) {
       if (customerOrder === results[i].item_id) {
@@ -66,6 +67,7 @@ function getCustomerOrder(results) {
             if (err) throw err;
             var orderInfo = `${orderQuantity} of item ${results[0].item_id}: ${results[0].product_name}`;
             console.log(`${divider}You ordered ${orderInfo}`);
+            // checking against database to determine enough inventory to fulfill current order
             var remainingStock = results[0].stock_quantity - orderQuantity;
             if (remainingStock >= 0) {
               var orderPrice = (orderQuantity * results[0].price).toFixed(2);
@@ -93,7 +95,7 @@ function getCustomerOrder(results) {
             }
           })
         })
-      } 
+      } //if the product does not exist prompting the user to either try again or quit
       if ((i+1) === results.length && correct === false) {
         console.log(`${divider}Invalid product selection.${divider}`)
         continueOrQuit(results);

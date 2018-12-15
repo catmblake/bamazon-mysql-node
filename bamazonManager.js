@@ -1,7 +1,8 @@
+// requiring dependencies
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 require("console.table");
-
+// creating connection variable with db object
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -14,8 +15,8 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("Manager Dashboard");
     beginTasks();
-})
-
+});
+// function that asks user what they would like to do and declares switch case depending on users answer
 function beginTasks() {
     inquirer.prompt([{
         name: "task",
@@ -36,26 +37,26 @@ function beginTasks() {
             case "Add New Product":
                 addNewProduct();
                 break;
-        }
+        };
     })
-}
-
+};
+// function that queries the products table and displays all product data to user
 function displayProductsForSale() {
     connection.query("SELECT * FROM products", function (err, response) {
         if (err) throw err;
         console.table(response);
         performNewTask();
     })
-}
-
+};
+// function that queries the products table and displays the data for products with low inventory levels
 function displayLowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, response) {
         if (err) throw err;
         console.table(response);
         performNewTask();
     })
-}
-
+};
+// function that uses inquirer to allow user to add additional stock to existing products
 function replenishInventory() {
     inquirer.prompt([{
         name: "updateItem",
@@ -68,6 +69,7 @@ function replenishInventory() {
         var correct = false;
         var updateItem = JSON.parse(answer.updateItem);
         connection.query("SELECT item_id FROM products", function (err, results) {
+            // checking if the product the user wants to update exists in the database
             for (var i = 0; i < results.length; i++) {
                 if (updateItem === results[i].item_id) {
                     correct = true;
@@ -100,19 +102,20 @@ function replenishInventory() {
                             );
                         })
                     })
-                }
+                }//if the product doesn't exist, informing the user of the error
                 if ((i + 1) === results.length && correct === false) {
                     console.log("Invalid product selection.");
                     performNewTask();
-                }
-            }
+                };
+            };
         })
     })
-}
-
+};
+// function that uses inquirer to allow user to add a new product to the database in an existing department
 function addNewProduct() {
     connection.query("SELECT department_name FROM departments", function (err, res) {
         if (err) throw err;
+        // creating a departments from data in the database so that user can add product to an existing dept only
         var departments = [];
         for (var i=0; i<res.length; i++) {
             departments.push(res[i].department_name)
@@ -155,7 +158,8 @@ function addNewProduct() {
             })
         })
     })
-}
+};
+// function that asks the user if they would like to perform another task or quit
 function performNewTask() {
     inquirer.prompt([{
         name: "newTask",
@@ -167,6 +171,6 @@ function performNewTask() {
         } else {
             console.log("Exiting Manager Dashboard");
             connection.end();
-        }
+        };
     })
-}
+};

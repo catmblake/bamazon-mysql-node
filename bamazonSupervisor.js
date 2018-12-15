@@ -1,7 +1,8 @@
+// requiring dependencies
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 require("console.table");
-
+// creating connection variable with db object
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -14,8 +15,8 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("Supervisor Dashboard");
     SupervisorFunctions();
-})
-
+});
+// function that asks the user what task they would like to perform
 function SupervisorFunctions() {
 inquirer.prompt([{
     name: "task",
@@ -30,18 +31,19 @@ inquirer.prompt([{
         case "Add New Department":
             createDepartment();
             break;
-    }
+    };
 })
-}
-
+};
+// function that displays product sales by department using an alias and inner join between two db tables
 function displayProductSales() {
     connection.query(
-        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales - departments.over_head_costs) AS total_profit FROM departments INNER JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id", function (err, res) {
+        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, COALESCE(SUM(products.product_sales), 0) AS product_sales, COALESCE(SUM(products.product_sales), 0) - departments.over_head_costs AS total_profit FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id ORDER BY departments.department_name", function (err, res) {
             if (err) throw err;
             console.table(res);
             askForFunction();
         })
-}
+};
+// function that prompts user to create a new department in the database
 function createDepartment() {
     inquirer.prompt([{
         name: "deptName",
@@ -64,7 +66,8 @@ function createDepartment() {
             askForFunction();
         })
     })
-}
+};
+// function that asks the user if they would like to perform another function or quit
 function askForFunction() {
     inquirer.prompt([{
         name: "newFunction",
@@ -78,4 +81,4 @@ function askForFunction() {
             connection.end();
         }
     })
-}
+};
