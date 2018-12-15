@@ -51,7 +51,7 @@ function getCustomerOrder(results) {
     var customerOrder = JSON.parse(answer.order);
     // checking against database to determine if product exists
     var correct = false;
-     for (var i = 0; i < results.length; i++) {
+    for (var i = 0; i < results.length; i++) {
       if (customerOrder === results[i].item_id) {
         correct = true;
         inquirer.prompt([{
@@ -96,7 +96,7 @@ function getCustomerOrder(results) {
           })
         })
       } //if the product does not exist prompting the user to either try again or quit
-      if ((i+1) === results.length && correct === false) {
+      if ((i + 1) === results.length && correct === false) {
         console.log(`${divider}Invalid product selection.${divider}`)
         continueOrQuit(results);
       }
@@ -122,7 +122,7 @@ function updateProductInventory(remainingStock, customerOrder) {
   );
 }
 // function to update product sales in the db when customer checks out
-function updateProductSales(productSales, customerOrder){
+function updateProductSales(productSales, customerOrder) {
   connection.query(
     "UPDATE products SET ? WHERE ?",
     [
@@ -140,7 +140,7 @@ function updateProductSales(productSales, customerOrder){
   );
 }
 // function asking customer if they want to checkout or cancel
-function continueOrQuit (results) {
+function continueOrQuit(results) {
   inquirer.prompt([{
     name: "continue",
     type: "list",
