@@ -11,11 +11,11 @@ var connection = mysql.createConnection({
   database: "bamazon_DB"
 });
 // declaring divider variable to use for console display
-var divider = ("\n---------------------------------------------\n\n")
+var divider = ("\n---------------------------------------------\n\n");
 // connecting to the mysql server and sql database
 connection.connect(function (err) {
   if (err) throw err;
-  console.log(`${divider}Welcome to bamazon, the leading command line retailer.\n\n`)
+  console.log(`${divider}Welcome to bamazon, the leading command line retailer.\n\n`);
   console.log(`The items listed below are on sale now!${divider}`);
   displayAvailableInventory()
 });
@@ -32,7 +32,7 @@ function displayAvailableInventory() {
       if (answer.shop) {
         getCustomerOrder(results);
       } else {
-        console.log(`${divider}Thank you for visiting bamazon. Please come back soon!${divider}`)
+        console.log(`${divider}Thank you for visiting bamazon. Please come back soon!${divider}`);
         connection.end();
       }
     })
@@ -85,19 +85,19 @@ function getCustomerOrder(results) {
                   console.log(`${divider}Thank you for shopping at bamazon!`);
                   connection.end();
                 } else if (answer.checkout === "Cancel Order") {
-                  console.log(`${divider}We have saved this order in your cart. Please come back to bamazon when you are ready to complete your purchase${divider}`)
+                  console.log(`${divider}We have saved this order in your cart. Please come back to bamazon when you are ready to complete your purchase${divider}`);
                   connection.end();
                 }
               })
             } else {
-              console.log(`${divider}We have insufficient stock to process your order at this time.${divider}`)
+              console.log(`${divider}We have insufficient stock to process your order at this time.${divider}`);
               continueOrQuit(results);
             }
           })
         })
       } //if the product does not exist prompting the user to either try again or quit
       if ((i + 1) === results.length && correct === false) {
-        console.log(`${divider}Invalid product selection.${divider}`)
+        console.log(`${divider}Invalid product selection.${divider}`);
         continueOrQuit(results);
       }
     }

@@ -36,7 +36,7 @@ function SupervisorFunctions() {
 };
 // function that displays product sales by department using an alias and inner join between two db tables
 function displayProductSales() {
-    var aliasTableQuery = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, COALESCE(SUM(products.product_sales), 0) AS product_sales, COALESCE(SUM(products.product_sales), 0) - departments.over_head_costs AS total_profit FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id ORDER BY departments.department_id"
+    var aliasTableQuery = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, COALESCE(SUM(products.product_sales), 0) AS product_sales, COALESCE(SUM(products.product_sales), 0) - departments.over_head_costs AS total_profit FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id ORDER BY departments.department_id";
     connection.query(aliasTableQuery, function (err, res) {
         if (err) throw err;
         console.table(res);

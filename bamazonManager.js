@@ -118,7 +118,7 @@ function addNewProduct() {
         // creating a departments from data in the database so that user can add product to an existing dept only
         var departments = [];
         for (var i = 0; i < res.length; i++) {
-            departments.push(res[i].department_name)
+            departments.push(res[i].department_name);
         };
         inquirer.prompt([{
             name: "productName",
