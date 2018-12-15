@@ -58,10 +58,9 @@ function createDepartment() {
     }]).then(function (answer) {
         var department = (answer.deptName).toLowerCase();
         var deptOverhead = JSON.parse(answer.overhead).toFixed(2);
-        console.log(deptOverhead);
         connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)", [department, deptOverhead], function (err, res) {
             if (err) throw err;
-            console.log(`${department} has been added to the bamazon database`);
+            console.log(`The ${department} department has been added to the bamazon database`);
             askForFunction();
         })
     })
