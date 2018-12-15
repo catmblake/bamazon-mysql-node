@@ -33,15 +33,20 @@ over_head_costs DECIMAL(10,2),
 PRIMARY KEY (department_id)
 );
 
-INSERT INTO departments (department_name, over_head_costs) VALUES ("pets", 19205.88);
-INSERT INTO departments (department_name, over_head_costs) VALUES ("kids", 23435.75);
-INSERT INTO departments (department_name, over_head_costs) VALUES ("apparel", 28373.89);
-INSERT INTO departments (department_name, over_head_costs) VALUES ("homeware", 83746.93);
-INSERT INTO departments (department_name, over_head_costs) VALUES ("health and beauty", 23454.43);
-INSERT INTO departments (department_name, over_head_costs) VALUES ("sports equipment", 35345.73);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("pets", 100.88);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("kids", 100.75);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("apparel", 100.89);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("homeware", 100.93);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("health and beauty", 100.43);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("sports equipment", 100.73);
 
 
 ALTER TABLE products
 ADD product_sales DECIMAL(10,2) NOT NULL;
 
 SELECT * FROM departments;
+
+SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales - departments.over_head_costs) AS total_profit
+FROM departments
+INNER JOIN products ON departments.department_name = products.department_name
+GROUP BY departments.department_id;

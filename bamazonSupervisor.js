@@ -35,7 +35,12 @@ inquirer.prompt([{
 }
 
 function displayProductSales() {
-    // code this out
+    connection.query(
+        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales - departments.over_head_costs) AS total_profit FROM departments INNER JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id", function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            askForFunction();
+        })
 }
 function createDepartment() {
     inquirer.prompt([{
