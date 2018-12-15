@@ -7,4 +7,4 @@ This 'bamazon' application is an Amazon-like storefront that runs in the command
 * View all low inventory items.
 * Update current products inventory levels.
 * Add new products to the store.
-3. **Supervisor Level**:
+3. **Supervisor Level**: By running the bamazonSupervisor.js the user can oversee the store's department operations. Here they can add new departments and view all sales by department.
