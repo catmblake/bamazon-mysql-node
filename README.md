@@ -22,6 +22,8 @@ The app also uses the following node package managers:
 * Console.table
   - This package allows the app to display information from the database as tables in the command line.
 
+Before using Bamazon you must first install all or the required dependencies listed above. You also need to run the schema script to set up the store database and the seeds script to populate it with departments and inventory.
+
 ### Bamazon In Action
 ![Customer View](https://github.com/catmblake/bamazon-mysql-node/blob/master/images/customerview.png)
 ![Manager View](https://github.com/catmblake/bamazon-mysql-node/blob/master/images/manager-view.png)
