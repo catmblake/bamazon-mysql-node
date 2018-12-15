@@ -21,4 +21,8 @@ The app also uses the following node package managers:
   - This package enables the app to communicate with the database.
 * Console.table
   - This package allows the app to display information from the database as tables in the command line.
-  
+
+### Bamazon In Action
+![Customer View](https://github.com/catmblake/bamazon-mysql-node/blob/master/images/customerview.png)
+![Manager View](https://github.com/catmblake/bamazon-mysql-node/blob/master/images/manager-view.png)
+![Supervisor View](https://github.com/catmblake/bamazon-mysql-node/blob/master/images/supervisor-view.png)
