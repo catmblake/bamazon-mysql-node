@@ -27,15 +27,21 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 SELECT * FROM products;
 
 CREATE TABLE departments (
-department_id INTEGER NOT NULL,
+department_id INTEGER NOT NULL AUTO_INCREMENT,
 department_name VARCHAR (255) NOT NULL,
 over_head_costs DECIMAL(10,2),
 PRIMARY KEY (department_id)
 );
 
-SELECT * FROM departments;
+INSERT INTO departments (department_name, over_head_costs) VALUES ("pets", 19205.88);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("kids", 23435.75);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("apparel", 28373.89);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("homeware", 83746.93);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("health and beauty", 23454.43);
+INSERT INTO departments (department_name, over_head_costs) VALUES ("sports equipment", 35345.73);
+
 
 ALTER TABLE products
-ADD product_sales DECIMAL(10,2);
+ADD product_sales DECIMAL(10,2) NOT NULL;
 
--- modify and add to dept table: product_sales DECIMAL(10,2)
+SELECT * FROM departments;
