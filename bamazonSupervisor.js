@@ -60,7 +60,7 @@ function createDepartment() {
                     console.log("This department already exists in our database");
                     askForFunction();
                 } // once we determine the department doesn't already exist we allow the user to proceed
-                if ((i + 1) === results.length && exists === false) {
+                if ((i + 1) === results.length && !exists) {
                     inquirer.prompt([{
                         name: "overhead",
                         type: "input",

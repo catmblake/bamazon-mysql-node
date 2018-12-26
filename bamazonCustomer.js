@@ -96,7 +96,7 @@ function getCustomerOrder(results) {
           })
         })
       } //if the product does not exist prompting the user to either try again or quit
-      if ((i + 1) === results.length && correct === false) {
+      if ((i + 1) === results.length && !correct) {
         console.log(`${divider}Invalid product selection.${divider}`);
         continueOrQuit(results);
       }

@@ -103,7 +103,7 @@ function replenishInventory() {
                         })
                     })
                 }//if the product doesn't exist, informing the user of the error
-                if ((i + 1) === results.length && correct === false) {
+                if ((i + 1) === results.length && !correct) {
                     console.log("Invalid product selection.");
                     performNewTask();
                 };
